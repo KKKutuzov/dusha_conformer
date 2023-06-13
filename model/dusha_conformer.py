@@ -15,12 +15,11 @@ class EmotionClassifier(pl.LightningModule):
         self.clf = clf
         self.pooling = nn.AdaptiveAvgPool2d((8, 100))
         self.logsoftmax = torch.nn.LogSoftmax(-1)
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.metrics = Metrics().to(self.device)
         self.plot_cm = True
         self.dataset_mapper = {0: "crowd", 1: "podcast"}
         self.lr = lr
-
 
     def forward(self, input_values, lenghts):
         logits = self.ssl_encoder(audio_signal=input_values, length=lenghts)[0]

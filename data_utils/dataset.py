@@ -4,11 +4,14 @@ import torchaudio
 
 
 class EmotionDataset(Dataset):
-    def __init__(self, audio_paths, labels, tokenizer, max_length=160000):
+    def __init__(
+        self, audio_paths, labels, tokenizer, augm_transform=None, max_length=160000
+    ):
         self.audio_paths = audio_paths
         self.labels = labels
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.augm_transform = augm_transform
         self.target_sampling_rate = 16000
 
     def __len__(self):
@@ -29,6 +32,12 @@ class EmotionDataset(Dataset):
             )
         else:
             input_values = input_values[:, : self.max_length]
+        if self.augm_transform:
+            input_values = torch.tensor(
+                self.augm_transform(
+                    input_values.numpy(), sample_rate=self.target_sampling_rate
+                )
+            )
         input_values = self.tokenizer(
             input_signal=input_values, length=torch.tensor([input_values.shape[1]])
         )
