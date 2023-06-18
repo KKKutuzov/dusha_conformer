@@ -37,7 +37,7 @@ with open("model/cfg_encoder.json") as handle:
 with open("model/cfg_processor.json") as handle:
     processor_cfg = json.loads(handle.read())
 
-CHECKPOINT_PATH = "/Users/user/Downloads/train/dush_conformer.ckpt"
+CHECKPOINT_PATH = ""
 
 model = ConformerEncoder(**encoder_cfg)
 tokenizer = AudioToMelSpectrogramPreprocessor(**processor_cfg)
