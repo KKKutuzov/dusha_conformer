@@ -9,7 +9,7 @@ from lion_pytorch import Lion
 
 
 class EmotionClassifier(pl.LightningModule):
-    def __init__(self, model, clf, lr=1e-5, device='cuda'):
+    def __init__(self, model, clf, lr=1e-5, device="cuda"):
         super().__init__()
         self.ssl_encoder = model
         self.clf = clf

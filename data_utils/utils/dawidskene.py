@@ -27,7 +27,8 @@ def get_dawidskene_pred(
         if max_item_proba >= threshold:
             key_with_max_value = tmp_dict[max_item_proba]
             aggregated_row = DawidSkeneResultDataclass(
-                task=row["task"], pred=key_with_max_value,
+                task=row["task"],
+                pred=key_with_max_value,
             )
             aggregated_data.append(aggregated_row)
     return aggregated_data

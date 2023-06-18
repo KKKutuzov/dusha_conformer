@@ -28,7 +28,8 @@ class EmotionDataset(Dataset):
 
         if input_values.shape[1] < self.max_length:
             input_values = torch.nn.functional.pad(
-                input_values, (0, self.max_length - input_values.shape[1]),
+                input_values,
+                (0, self.max_length - input_values.shape[1]),
             )
         else:
             input_values = input_values[:, : self.max_length]

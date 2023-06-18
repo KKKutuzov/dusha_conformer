@@ -2,7 +2,10 @@ import torch
 import torchaudio
 import json
 
-from nemo.collections.asr.modules import ConformerEncoder, AudioToMelSpectrogramPreprocessor
+from nemo.collections.asr.modules import (
+    ConformerEncoder,
+    AudioToMelSpectrogramPreprocessor,
+)
 from model.dusha_conformer import ClassificationHead, EmotionClassifier
 
 
@@ -13,7 +16,8 @@ def predict(audio_path, model, tokenizer, device):
     input_values, _ = torchaudio.load(audio_path)
     if input_values.shape[1] < 160000:
         input_values = torch.nn.functional.pad(
-            input_values, (0, 160000 - input_values.shape[1]),
+            input_values,
+            (0, 160000 - input_values.shape[1]),
         )
     else:
         input_values = input_values[:, :160000]
@@ -28,12 +32,12 @@ def predict(audio_path, model, tokenizer, device):
     ]
 
 
-with open('model/cfg_encoder.json') as handle:
+with open("model/cfg_encoder.json") as handle:
     encoder_cfg = json.loads(handle.read())
-with open('model/cfg_processor.json') as handle:
+with open("model/cfg_processor.json") as handle:
     processor_cfg = json.loads(handle.read())
 
-CHECKPOINT_PATH = ""
+CHECKPOINT_PATH = "/Users/user/Downloads/train/dush_conformer.ckpt"
 
 model = ConformerEncoder(**encoder_cfg)
 tokenizer = AudioToMelSpectrogramPreprocessor(**processor_cfg)
@@ -41,8 +45,8 @@ clf = ClassificationHead()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-if device == 'cpu':
-    checkpoint = torch.load(CHECKPOINT_PATH, map_location=torch.device('cpu'))
+if device == "cpu":
+    checkpoint = torch.load(CHECKPOINT_PATH, map_location=torch.device("cpu"))
 else:
     checkpoint = torch.load(CHECKPOINT_PATH)
 

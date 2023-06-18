@@ -126,7 +126,9 @@ def aggregate_data(
     data_for_agg = []
     for row in all_data:
         row_for_agg = DawidSkeneEntryDataclass(
-            task=row.hash_id, worker=row.annotator_id, label=row.annotator_emo,
+            task=row.hash_id,
+            worker=row.annotator_id,
+            label=row.annotator_emo,
         )
         data_for_agg.append(row_for_agg)
 
@@ -152,7 +154,8 @@ def aggregate_data(
             exp_data=exp_data[dataset],
         )
         agg_data_to_file(
-            file_path=out_path / "aggregated_dataset" / dataset, agg_data=agg_data,
+            file_path=out_path / "aggregated_dataset" / dataset,
+            agg_data=agg_data,
         )
     exp_data_to_file(
         file_path=out_path / "train" / "train",

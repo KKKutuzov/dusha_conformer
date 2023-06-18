@@ -18,18 +18,29 @@ from data_utils.dataset import EmotionDataset
 
 @click.command()
 @click.option(
-    "-train", "--train-manifest-path", required=True, type=click.Path(exists=True),
+    "-train",
+    "--train-manifest-path",
+    required=True,
+    type=click.Path(exists=True),
 )
 @click.option(
-    "-test", "--test-manifest-path", required=True, type=click.Path(exists=True),
+    "-test",
+    "--test-manifest-path",
+    required=True,
+    type=click.Path(exists=True),
 )
 @click.option(
-    "-c", "--checkpoint-dir", required=True, type=click.Path(exists=True),
+    "-c",
+    "--checkpoint-dir",
+    required=True,
+    type=click.Path(exists=True),
 )
 def train(train_manifest_path: Path, test_manifest_path: Path, checkpoint_dir: Path):
 
-    ssl_model = nemo_asr.models.ssl_models.SpeechEncDecSelfSupervisedModel.from_pretrained(
-        model_name="ssl_en_conformer_large"
+    ssl_model = (
+        nemo_asr.models.ssl_models.SpeechEncDecSelfSupervisedModel.from_pretrained(
+            model_name="ssl_en_conformer_large"
+        )
     )
     model = ssl_model.encoder
     tokenizer = ssl_model.preprocessor.cpu()
@@ -71,7 +82,10 @@ def train(train_manifest_path: Path, test_manifest_path: Path, checkpoint_dir: P
     )
 
     train_dataset = EmotionDataset(
-        train.path.values, train.label.values, tokenizer, augm_transform,
+        train.path.values,
+        train.label.values,
+        tokenizer,
+        augm_transform,
     )
     train_dataloader = DataLoader(train_dataset, batch_size=16, sampler=sampler)
     val_crowd_dataset = EmotionDataset(
