@@ -9,14 +9,13 @@ from lion_pytorch import Lion
 
 
 class EmotionClassifier(pl.LightningModule):
-    def __init__(self, model, clf, lr=1e-5):
+    def __init__(self, model, clf, lr=1e-5, device='cuda'):
         super().__init__()
         self.ssl_encoder = model
         self.clf = clf
         self.pooling = nn.AdaptiveAvgPool2d((8, 100))
         self.logsoftmax = torch.nn.LogSoftmax(-1)
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.metrics = Metrics().to(self.device)
+        self.metrics = Metrics().to(device)
         self.plot_cm = True
         self.dataset_mapper = {0: "crowd", 1: "podcast"}
         self.lr = lr
