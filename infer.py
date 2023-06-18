@@ -13,7 +13,9 @@ id2label = {0: "angry", 1: "sad", 2: "neutral", 3: "positive"}
 
 
 def predict(audio_path, model, tokenizer, device):
-    input_values, _ = torchaudio.load(audio_path)
+    input_values, sampling_rate = torchaudio.load(audio_path)
+    resampler = torchaudio.transforms.Resample(sampling_rate, 16000)
+    input_values = resampler(input_values)
     if input_values.shape[1] < 160000:
         input_values = torch.nn.functional.pad(
             input_values,
@@ -56,4 +58,11 @@ emotion_classifier.eval()
 
 emotion_classifier = emotion_classifier.to(device)
 
-print(predict("example.wav", emotion_classifier, tokenizer, device))
+print(
+    predict(
+        "positive.wav",
+        emotion_classifier,
+        tokenizer,
+        device,
+    )
+)
