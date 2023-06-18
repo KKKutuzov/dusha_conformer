@@ -1,14 +1,15 @@
 import torch
 import torchaudio
+import json
 
-import nemo.collections.asr as nemo_asr
+from nemo.collections.asr.modules import ConformerEncoder, AudioToMelSpectrogramPreprocessor
 from model.dusha_conformer import ClassificationHead, EmotionClassifier
 
 
 id2label = {0: "angry", 1: "sad", 2: "neutral", 3: "positive"}
 
 
-def predict(audio_path, model, tokenizer):
+def predict(audio_path, model, tokenizer, device):
     input_values, _ = torchaudio.load(audio_path)
     if input_values.shape[1] < 160000:
         input_values = torch.nn.functional.pad(
@@ -27,24 +28,28 @@ def predict(audio_path, model, tokenizer):
     ]
 
 
-CHECKPOINT_PATH = ""
-ssl_model = nemo_asr.models.ssl_models.SpeechEncDecSelfSupervisedModel.from_pretrained(
-    model_name="ssl_en_conformer_large"
-)
-model = ssl_model.encoder
-tokenizer = ssl_model.preprocessor.cpu()
+with open('model/cfg_encoder.json') as handle:
+    encoder_cfg = json.loads(handle.read())
+with open('model/cfg_processor.json') as handle:
+    processor_cfg = json.loads(handle.read())
+
+CHECKPOINT_PATH = "/Users/user/Downloads/train/dush_conformer.ckpt"
+
+model = ConformerEncoder(**encoder_cfg)
+tokenizer = AudioToMelSpectrogramPreprocessor(**processor_cfg)
 clf = ClassificationHead()
 
-checkpoint = torch.load(CHECKPOINT_PATH)
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-emotion_classifier = EmotionClassifier(model, clf)
+if device == 'cpu':
+    checkpoint = torch.load(CHECKPOINT_PATH, map_location=torch.device('cpu'))
+else:
+    checkpoint = torch.load(CHECKPOINT_PATH)
 
-checkpoint = torch.load(CHECKPOINT_PATH)
-
-emotion_classifier = EmotionClassifier(model, clf)
+emotion_classifier = EmotionClassifier(model, clf, device=device)
 emotion_classifier.load_state_dict(checkpoint["state_dict"])
 emotion_classifier.eval()
-device = "cuda" if torch.cuda.is_available() else "cpu"
+
 emotion_classifier = emotion_classifier.to(device)
 
-print(predict("example.wav"))
+print(predict("example.wav", emotion_classifier, tokenizer, device))
