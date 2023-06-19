@@ -9,7 +9,7 @@
 Данные можно скачать из репозитория [DUSHA](https://github.com/salute-developers/golos/tree/master/dusha)
 
 Для корректной работы необходимо установить библиотеку [NeMo](https://github.com/NVIDIA/NeMo)
-и дополнительный зависимости:
+и дополнительные зависимости:
 
     pip install -r requirements.txt
 
